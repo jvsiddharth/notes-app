@@ -8,7 +8,6 @@ interface User {
   id: string
   email: string
   role: string
-  createdAt: string
 }
 
 export default function AdminPage() {
@@ -192,7 +191,7 @@ export default function AdminPage() {
                         Role
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Joined
+                        Status
                       </th>
                     </tr>
                   </thead>
@@ -211,8 +210,10 @@ export default function AdminPage() {
                             {user.role}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {new Date(user.createdAt).toLocaleDateString()}
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                            Active
+                          </span>
                         </td>
                       </tr>
                     ))}

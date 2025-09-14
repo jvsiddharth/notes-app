@@ -17,10 +17,9 @@ export async function GET(request: NextRequest) {
       select: {
         id: true,
         email: true,
-        role: true,
-        createdAt: true
+        role: true
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { email: 'asc' }
     })
     
     return NextResponse.json({ users })
@@ -81,8 +80,7 @@ export async function POST(request: NextRequest) {
       select: {
         id: true,
         email: true,
-        role: true,
-        createdAt: true
+        role: true
       }
     })
     
@@ -95,4 +93,15 @@ export async function POST(request: NextRequest) {
     console.error('Create user error:', _error)
     return NextResponse.json({ error: 'Failed to create user' }, { status: 500 })
   }
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    },
+  })
 }
