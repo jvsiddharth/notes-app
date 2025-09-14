@@ -8,9 +8,11 @@
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",
+    "db:generate": "prisma generate",
     "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio",
-    "db:reset": "prisma db push --force-reset && npm run db:seed"
+    "vercel-build": "prisma generate && prisma db push && npm run seed-if-needed && next build",
+    "seed-if-needed": "node scripts/conditional-seed.js",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^6.16.1",
