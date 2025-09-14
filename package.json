@@ -8,11 +8,11 @@
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",
-    "db:generate": "prisma generate", 
+    "db:generate": "prisma generate",
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
     "db:reset": "prisma db push --force-reset && npm run db:seed",
-    "vercel-build": "prisma generate && prisma db push --force-reset && prisma db seed && next build",
+    "vercel-build": "prisma generate && prisma db push && prisma db seed && next build",
     "postinstall": "prisma generate"
   },
   "prisma": {
