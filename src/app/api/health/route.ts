@@ -11,7 +11,8 @@ export async function GET() {
       timestamp: new Date().toISOString(),
       database: dbHealth
     })
-  } catch (error) {
+  } catch (_error) {
+    console.error('Health check error:', _error)
     return NextResponse.json({
       status: 'error',
       timestamp: new Date().toISOString(),

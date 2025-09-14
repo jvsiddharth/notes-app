@@ -21,7 +21,8 @@ export async function GET(request: NextRequest) {
     })
     
     return NextResponse.json({ notes })
-  } catch (error) {
+  } catch (_error) {
+    console.error('Get notes error:', _error)
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 }
@@ -66,8 +67,8 @@ export async function POST(request: NextRequest) {
     })
     
     return NextResponse.json({ note }, { status: 201 })
-  } catch (error) {
-    console.error('Create note error:', error)
+  } catch (_error) {
+    console.error('Create note error:', _error)
     return NextResponse.json({ error: 'Failed to create note' }, { status: 500 })
   }
 }

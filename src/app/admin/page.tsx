@@ -2,7 +2,7 @@
 'use client'
 import { useAuth } from '@/lib/auth-context'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 
 interface User {
   id: string
@@ -20,15 +20,8 @@ export default function AdminPage() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
-  useEffect(() => {
-    if (!loading && (!user || user.role !== 'ADMIN')) {
-      router.push('/dashboard')
-    } else if (user && token) {
-      fetchUsers()
-    }
-  }, [user, loading, token, router])
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
+    if (!token) return
     try {
       const response = await fetch('/api/users', {
         headers: { Authorization: `Bearer ${token}` }
@@ -37,10 +30,18 @@ export default function AdminPage() {
         const data = await response.json()
         setUsers(data.users)
       }
-    } catch (error) {
-      console.error('Failed to fetch users:', error)
+    } catch (_error) {
+      console.error('Failed to fetch users:', _error)
     }
-  }
+  }, [token])
+
+  useEffect(() => {
+    if (!loading && (!user || user.role !== 'ADMIN')) {
+      router.push('/dashboard')
+    } else if (user && token) {
+      fetchUsers()
+    }
+  }, [user, loading, token, router, fetchUsers])
 
   const handleInviteUser = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -67,7 +68,8 @@ export default function AdminPage() {
       } else {
         setError(data.error)
       }
-    } catch (error) {
+    } catch (_error) {
+      console.error('Failed to invite user:', _error)
       setError('Failed to invite user')
     }
   }

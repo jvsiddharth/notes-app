@@ -2,7 +2,7 @@
 'use client'
 import { useAuth } from '@/lib/auth-context'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 
 interface Note {
   id: string
@@ -33,16 +33,8 @@ export default function DashboardPage() {
   const [loadingNotes, setLoadingNotes] = useState(true)
   const [error, setError] = useState('')
 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login')
-    } else if (user && token) {
-      fetchNotes()
-      fetchSubscriptionStatus()
-    }
-  }, [user, loading, token, router])
-
-  const fetchNotes = async () => {
+  const fetchNotes = useCallback(async () => {
+    if (!token) return
     try {
       const response = await fetch('/api/notes', {
         headers: { Authorization: `Bearer ${token}` }
@@ -51,14 +43,15 @@ export default function DashboardPage() {
         const data = await response.json()
         setNotes(data.notes)
       }
-    } catch (error) {
-      console.error('Failed to fetch notes:', error)
+    } catch (err) {
+      console.error('Failed to fetch notes:', err)
     } finally {
       setLoadingNotes(false)
     }
-  }
+  }, [token])
 
-  const fetchSubscriptionStatus = async () => {
+  const fetchSubscriptionStatus = useCallback(async () => {
+    if (!token) return
     try {
       const response = await fetch('/api/subscription/status', {
         headers: { Authorization: `Bearer ${token}` }
@@ -67,10 +60,19 @@ export default function DashboardPage() {
         const data = await response.json()
         setSubscriptionStatus(data)
       }
-    } catch (error) {
-      console.error('Failed to fetch subscription status:', error)
+    } catch (err) {
+      console.error('Failed to fetch subscription status:', err)
     }
-  }
+  }, [token])
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login')
+    } else if (user && token) {
+      fetchNotes()
+      fetchSubscriptionStatus()
+    }
+  }, [user, loading, token, router, fetchNotes, fetchSubscriptionStatus])
 
   const handleCreateNote = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -96,7 +98,8 @@ export default function DashboardPage() {
       } else {
         setError(data.error)
       }
-    } catch (error) {
+    } catch (err) {
+      console.error('Failed to create note:', err)
       setError('Failed to create note')
     }
   }
@@ -125,7 +128,8 @@ export default function DashboardPage() {
         ))
         setEditingNote(null)
       }
-    } catch (error) {
+    } catch (err) {
+      console.error('Failed to update note:', err)
       setError('Failed to update note')
     }
   }
@@ -143,7 +147,8 @@ export default function DashboardPage() {
         setNotes(notes.filter(note => note.id !== id))
         fetchSubscriptionStatus() // Refresh usage stats
       }
-    } catch (error) {
+    } catch (err) {
+      console.error('Failed to delete note:', err)
       setError('Failed to delete note')
     }
   }
@@ -164,7 +169,8 @@ export default function DashboardPage() {
         const data = await response.json()
         setError(data.error)
       }
-    } catch (error) {
+    } catch (err) {
+      console.error('Failed to upgrade subscription:', err)
       setError('Failed to upgrade subscription')
     }
   }
@@ -248,7 +254,7 @@ export default function DashboardPage() {
             {subscriptionStatus.isLimitReached.notes && (
               <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
                 <p className="text-yellow-800 text-sm">
-                  You've reached your note limit. Upgrade to Pro for unlimited notes.
+                  {`You've reached your note limit. Upgrade to Pro for unlimited notes.`}
                 </p>
               </div>
             )}

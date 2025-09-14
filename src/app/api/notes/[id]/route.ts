@@ -3,16 +3,21 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getAuthUser } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 
+interface RouteParams {
+  params: Promise<{ id: string }>
+}
+
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: RouteParams
 ) {
   try {
     const user = await getAuthUser(request)
+    const { id } = await context.params
     
     const note = await prisma.note.findFirst({
       where: { 
-        id: params.id,
+        id,
         tenantId: user.tenantId // Ensure tenant isolation
       },
       select: {
@@ -31,16 +36,18 @@ export async function GET(
     
     return NextResponse.json({ note })
   } catch (error) {
+    console.error('Get note error:', error)
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: RouteParams
 ) {
   try {
     const user = await getAuthUser(request)
+    const { id } = await context.params
     const { title, content } = await request.json()
     
     if (!title || !content) {
@@ -50,7 +57,7 @@ export async function PUT(
     // Check if note exists and belongs to user's tenant
     const existingNote = await prisma.note.findFirst({
       where: { 
-        id: params.id,
+        id,
         tenantId: user.tenantId
       }
     })
@@ -60,7 +67,7 @@ export async function PUT(
     }
     
     const note = await prisma.note.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         title: title.trim(),
         content: content.trim(),
@@ -85,15 +92,16 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: RouteParams
 ) {
   try {
     const user = await getAuthUser(request)
+    const { id } = await context.params
     
     // Check if note exists and belongs to user's tenant
     const existingNote = await prisma.note.findFirst({
       where: { 
-        id: params.id,
+        id,
         tenantId: user.tenantId
       }
     })
@@ -103,7 +111,7 @@ export async function DELETE(
     }
     
     await prisma.note.delete({
-      where: { id: params.id }
+      where: { id }
     })
     
     return NextResponse.json({ message: 'Note deleted successfully' })

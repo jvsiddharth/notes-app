@@ -1,17 +1,7 @@
 // src/app/api/auth/me/route.ts
 import { NextRequest, NextResponse } from 'next/server'
-import { verifyToken } from '@/lib/auth'
+import { getAuthUser } from '@/lib/auth'
 import { prisma } from '@/lib/db'
-
-async function getAuthUser(request: NextRequest) {
-  const authHeader = request.headers.get('authorization')
-  if (!authHeader?.startsWith('Bearer ')) {
-    throw new Error('Unauthorized')
-  }
-  
-  const token = authHeader.substring(7)
-  return verifyToken(token)
-}
 
 export async function GET(request: NextRequest) {
   try {
@@ -40,7 +30,8 @@ export async function GET(request: NextRequest) {
         }
       }
     })
-  } catch (error) {
+  } catch (_error) {
+    console.error('Get user error:', _error)
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 }

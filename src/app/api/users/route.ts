@@ -24,7 +24,8 @@ export async function GET(request: NextRequest) {
     })
     
     return NextResponse.json({ users })
-  } catch (error) {
+  } catch (_error) {
+    console.error('Get users error:', _error)
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 }
@@ -90,8 +91,8 @@ export async function POST(request: NextRequest) {
       user: newUser,
       tempPassword // In real app, this would be sent via email
     }, { status: 201 })
-  } catch (error) {
-    console.error('Create user error:', error)
+  } catch (_error) {
+    console.error('Create user error:', _error)
     return NextResponse.json({ error: 'Failed to create user' }, { status: 500 })
   }
 }

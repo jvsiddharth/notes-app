@@ -3,12 +3,17 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getAuthUser } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 
+interface RouteParams {
+  params: Promise<{ slug: string }>
+}
+
 export async function POST(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  context: RouteParams
 ) {
   try {
     const user = await getAuthUser(request)
+    const { slug } = await context.params
     
     // Only admins can upgrade subscriptions
     if (user.role !== 'ADMIN') {
@@ -17,7 +22,7 @@ export async function POST(
     
     // Verify tenant ownership
     const tenant = await prisma.tenant.findUnique({
-      where: { slug: params.slug }
+      where: { slug }
     })
     
     if (!tenant || tenant.id !== user.tenantId) {

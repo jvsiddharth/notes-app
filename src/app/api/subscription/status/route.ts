@@ -43,7 +43,8 @@ export async function GET(request: NextRequest) {
         users: tenant.subscription === 'FREE' && tenant._count.users >= 10
       }
     })
-  } catch (error) {
+  } catch (_error) {
+    console.error('Get subscription status error:', _error)
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 }
