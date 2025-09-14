@@ -35,8 +35,8 @@ export async function GET(
     }
     
     return NextResponse.json({ note })
-  } catch (error) {
-    console.error('Get note error:', error)
+  } catch (_error) {
+    console.error('Get note error:', _error)
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 }
@@ -84,8 +84,8 @@ export async function PUT(
     })
     
     return NextResponse.json({ note })
-  } catch (error) {
-    console.error('Update note error:', error)
+  } catch (_error) {
+    console.error('Update note error:', _error)
     return NextResponse.json({ error: 'Failed to update note' }, { status: 500 })
   }
 }
@@ -115,8 +115,8 @@ export async function DELETE(
     })
     
     return NextResponse.json({ message: 'Note deleted successfully' })
-  } catch (error) {
-    console.error('Delete note error:', error)
+  } catch (_error) {
+    console.error('Delete note error:', _error)
     return NextResponse.json({ error: 'Failed to delete note' }, { status: 500 })
   }
 }

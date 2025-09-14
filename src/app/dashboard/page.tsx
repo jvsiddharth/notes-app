@@ -43,8 +43,8 @@ export default function DashboardPage() {
         const data = await response.json()
         setNotes(data.notes)
       }
-    } catch (err) {
-      console.error('Failed to fetch notes:', err)
+    } catch (_error) {
+      console.error('Failed to fetch notes:', _error)
     } finally {
       setLoadingNotes(false)
     }
@@ -60,8 +60,8 @@ export default function DashboardPage() {
         const data = await response.json()
         setSubscriptionStatus(data)
       }
-    } catch (err) {
-      console.error('Failed to fetch subscription status:', err)
+    } catch (_error) {
+      console.error('Failed to fetch subscription status:', _error)
     }
   }, [token])
 
@@ -98,8 +98,8 @@ export default function DashboardPage() {
       } else {
         setError(data.error)
       }
-    } catch (err) {
-      console.error('Failed to create note:', err)
+    } catch (_error) {
+      console.error('Failed to create note:', _error)
       setError('Failed to create note')
     }
   }
@@ -128,8 +128,8 @@ export default function DashboardPage() {
         ))
         setEditingNote(null)
       }
-    } catch (err) {
-      console.error('Failed to update note:', err)
+    } catch (_error) {
+      console.error('Failed to update note:', _error)
       setError('Failed to update note')
     }
   }
@@ -147,8 +147,8 @@ export default function DashboardPage() {
         setNotes(notes.filter(note => note.id !== id))
         fetchSubscriptionStatus() // Refresh usage stats
       }
-    } catch (err) {
-      console.error('Failed to delete note:', err)
+    } catch (_error) {
+      console.error('Failed to delete note:', _error)
       setError('Failed to delete note')
     }
   }
@@ -169,8 +169,8 @@ export default function DashboardPage() {
         const data = await response.json()
         setError(data.error)
       }
-    } catch (err) {
-      console.error('Failed to upgrade subscription:', err)
+    } catch (_error) {
+      console.error('Failed to upgrade subscription:', _error)
       setError('Failed to upgrade subscription')
     }
   }

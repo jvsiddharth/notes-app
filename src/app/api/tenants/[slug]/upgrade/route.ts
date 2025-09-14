@@ -48,8 +48,8 @@ export async function POST(
         subscription: updatedTenant.subscription
       }
     })
-  } catch (error) {
-    console.error('Upgrade error:', error)
+  } catch (_error) {
+    console.error('Upgrade error:', _error)
     return NextResponse.json({ error: 'Failed to upgrade subscription' }, { status: 500 })
   }
 }
